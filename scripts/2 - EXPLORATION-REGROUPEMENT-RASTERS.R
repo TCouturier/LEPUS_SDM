@@ -98,11 +98,12 @@ plot(cartetot)
 
 # test de corrélation entre les variables pour rechercher celles qui apportent la même information
 
-cor<-layerStats(cartetot,'pearson',na.rm=TRUE)
+cor<-raster::layerStats(cartetot,'pearson',na.rm=TRUE)
 write.csv2 (cor,'outputs/correlations.csv')
 
-# affichage de la matrice de corrélation
 
-corrplot::corrplot(cor, type="upper", order="hclust", tl.col="black", tl.srt=45)
+# affichage de la matrice de corrélation (à exporter dans outputs)
+
+graphe_correlations<-corrplot::corrplot(cor$`pearson correlation coefficient`, type="upper", order="hclust", tl.col="black", tl.srt=45)
 
 
