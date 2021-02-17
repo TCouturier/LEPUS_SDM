@@ -18,10 +18,10 @@ projection(pente_PNM)<-CRS("+init=EPSG:2154")
 tpi_PNM<-raster::raster("data/rasters/tpi_PNM_focal400.asc")
 projection(tpi_PNM)<-CRS("+init=EPSG:2154")
 
-rugosite_PNM<-raster::raster("rugosite_PNM_focal400.asc")
+rugosite_PNM<-raster::raster("data/rasters/rugosite_PNM_focal400.asc")
 projection(rugosite_PNM)<-CRS("+init=EPSG:2154")
 
-roches_PNM<-raster::raster("data/rasters/data/rasters/roches_PNM_focal400.asc")
+roches_PNM<-raster::raster("data/rasters/roches_PNM_focal400.asc")
 projection(roches_PNM)<-CRS("+init=EPSG:2154")
 
 pelouses_prairies_PNM<-raster::raster("data/rasters/pelouses_prairies_PNM_focal400.asc")
@@ -45,11 +45,8 @@ projection(dist_bati_PNM)<-CRS("+init=EPSG:2154")
 dist_foret_PNM<-raster::raster("data/rasters/distance_foret_PNM_focal400.asc")
 projection(dist_foret_PNM)<-CRS("+init=EPSG:2154")
 
-dist_ski_PNM<-raster:raster("data/rasters/distance_ski_PNM_focal400.asc")
+dist_ski_PNM<-raster::raster("data/rasters/distance_ski_PNM_focal400.asc")
 projection(dist_ski_PNM)<-CRS("+init=EPSG:2154")
-
-T_hiver_PNM<-raster::raster("data/rasters/T_hiver_PNM_focal400.asc")
-projection(T_hiver_PNM)<-CRS("+init=EPSG:2154")
 
 neige_PNM<-raster::raster("data/rasters/neige_PNM_focal400.asc")
 projection(neige_PNM)<-CRS("+init=EPSG:2154")
@@ -60,8 +57,24 @@ projection(neige_PNM)<-CRS("+init=EPSG:2154")
 limite_pnm<-sf::st_read(dsn = "data/site", layer = "pnm_total")
 maskPNM <- raster::rasterize(limite_pnm, alt_PNM, background=NA)
 
-alt_PNM <- mask(alt_PNM, maskPNM)
+# découpage des couches RASTER selon l'emprise du site d'étude
 
+alt_PNM <- mask(alt_PNM, maskPNM)
+pente_PNM <- mask(pente_PNM, maskPNM)
+rugosite_PNM <- mask(rugosite_PNM, maskPNM)
+tpi_PNM <- mask(tpi_PNM, maskPNM)
+roches_PNM <- mask(roches_PNM, maskPNM)
+pelouses_prairies_PNM <- mask(pelouses_prairies_PNM, maskPNM)
+landes_PNM <- mask(landes_PNM, maskPNM)
+forets_PNM <- mask(forets_PNM, maskPNM)
+dist_chemins_PNM <- mask(dist_chemins_PNM, maskPNM)
+dist_troncon_eau_PNM <- mask(dist_troncon_eau_PNM, maskPNM)
+dist_foret_PNM <- mask(dist_foret_PNM, maskPNM)
+dist_ski_PNM <- mask(dist_ski_PNM, maskPNM)
+dist_bati_PNM <- mask(dist_bati_PNM, maskPNM)
+neige_PNM <- mask(neige_PNM, maskPNM)
+
+# compilation des raster dans un seul fichier avec utilisation de la fonction scale pour centrer réduire les valeurs des variables
 
 cartetot <- stack(list(alt_PNM=scale(alt_PNM), 
                        pente_PNM=scale(pente_PNM), 
@@ -75,15 +88,21 @@ cartetot <- stack(list(alt_PNM=scale(alt_PNM),
                        dist_troncon_eau_PNM=scale(dist_troncon_eau_PNM),  
                        dist_foret_PNM=scale(dist_foret_PNM),
                        dist_ski_PNM=scale(dist_ski_PNM), 
-                       T_hiver_PNM=scale(T_hiver_PNM), 
                        neige_PNM=scale(neige_PNM), 
                        dist_bati_PNM=scale(dist_bati_PNM))) # tout
+
+# ajouter ici une fonction pour rendre l'affichage plus agréable à lire !
+
 plot(cartetot)
 
 
-# corrélations entre variables
-#cor<-layerStats(cartetot,'pearson',na.rm=TRUE)
-#write.csv2 (cor,'correlations.csv')
+# test de corrélation entre les variables pour rechercher celles qui apportent la même information
 
-# fonction corrplot
-corrplot::corrplot(CorTable, type="upper", order="hclust", tl.col="black", tl.srt=45)
+cor<-layerStats(cartetot,'pearson',na.rm=TRUE)
+write.csv2 (cor,'outputs/correlations.csv')
+
+# affichage de la matrice de corrélation
+
+corrplot::corrplot(cor, type="upper", order="hclust", tl.col="black", tl.srt=45)
+
+
