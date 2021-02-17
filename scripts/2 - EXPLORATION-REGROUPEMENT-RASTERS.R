@@ -3,9 +3,12 @@
 ############ EXPLORATION ET REGROUPEMENT RASTERS
 #########################################################
 
+library(raster)
+
 # importation de tous les rasters créés
 
-alt_devoluy<-raster("alt_devoluy_focal400.asc")
+
+alt_PNM<-raster::raster("data/rasters/alt_PNM_focal400.asc")
 projection(alt_devoluy)<-CRS(pcs_l93)
 pente_devoluy<-raster("pente_devoluy_focal400.asc")
 projection(pente_devoluy)<-CRS(pcs_l93)
@@ -38,6 +41,7 @@ projection(T_hiver_devoluy)<-CRS(pcs_l93)
 neige_devoluy<-raster("neige_devoluy_focal400.asc")
 projection(neige_devoluy)<-CRS(pcs_l93)
 
+# ajouter étape masques
 
 
 cartetot <- stack(list(alt_devoluy=scale(alt_devoluy), 
