@@ -4,59 +4,63 @@
 #########################################################
 
 library(raster)
+library(sf)
 library(corrplot)
 
 # importation de tous les rasters créés
 
 alt_PNM<-raster::raster("data/rasters/alt_PNM_focal400.asc")
-projection(alt_PNM)<-CRS(pcs_l93)
+projection(alt_PNM)<-CRS("+init=EPSG:2154")
 
 pente_PNM<-raster::raster("data/rasters/pente_PNM_focal400.asc")
-projection(pente_PNM)<-CRS(pcs_l93)
+projection(pente_PNM)<-CRS("+init=EPSG:2154")
 
 tpi_PNM<-raster::raster("data/rasters/tpi_PNM_focal400.asc")
-projection(tpi_PNM)<-CRS(pcs_l93)
+projection(tpi_PNM)<-CRS("+init=EPSG:2154")
 
 rugosite_PNM<-raster::raster("rugosite_PNM_focal400.asc")
-projection(rugosite_PNM)<-CRS(pcs_l93)
+projection(rugosite_PNM)<-CRS("+init=EPSG:2154")
 
 roches_PNM<-raster::raster("data/rasters/data/rasters/roches_PNM_focal400.asc")
-projection(roches_PNM)<-CRS(pcs_l93)
+projection(roches_PNM)<-CRS("+init=EPSG:2154")
 
 pelouses_prairies_PNM<-raster::raster("data/rasters/pelouses_prairies_PNM_focal400.asc")
-projection(pelouses_PNM_devoluy)<-CRS(pcs_l93)
+projection(pelouses_PNM_devoluy)<-CRS("+init=EPSG:2154")
 
 landes_PNM<-raster::raster("data/rasters/landes_PNM_focal400.asc")
-projection(landes_PNM)<-CRS(pcs_l93)
+projection(landes_PNM)<-CRS("+init=EPSG:2154")
 
 forets_PNM<-raster::raster("data/rasters/forets_PNM_focal400.asc")
-projection(forets_PNM)<-CRS(pcs_l93)
+projection(forets_PNM)<-CRS("+init=EPSG:2154")
 
 dist_chemins_PNM<-raster::raster("data/rasters/distance_chemins_PNM_focal400.asc")
-projection(dist_chemins_PNM)<-CRS(pcs_l93)
+projection(dist_chemins_PNM)<-CRS("+init=EPSG:2154")
 
 dist_troncon_eau_PNM<-raster::raster("data/rasters/distance_eau_PNM_focal400.asc")
-projection(dist_troncon_eau_PNM)<-CRS(pcs_l93)
+projection(dist_troncon_eau_PNM)<-CRS("+init=EPSG:2154")
 
 dist_bati_PNM<-raster::raster("data/rasters/distance_bati_PNM_focal400.asc")
-projection(dist_bati_PNM)<-CRS(pcs_l93)
+projection(dist_bati_PNM)<-CRS("+init=EPSG:2154")
 
 dist_foret_PNM<-raster::raster("data/rasters/distance_foret_PNM_focal400.asc")
-projection(dist_foret_PNM)<-CRS(pcs_l93)
+projection(dist_foret_PNM)<-CRS("+init=EPSG:2154")
 
 dist_ski_PNM<-raster:raster("data/rasters/distance_ski_PNM_focal400.asc")
-projection(dist_ski_PNM)<-CRS(pcs_l93)
+projection(dist_ski_PNM)<-CRS("+init=EPSG:2154")
 
 T_hiver_PNM<-raster::raster("data/rasters/T_hiver_PNM_focal400.asc")
-projection(T_hiver_PNM)<-CRS(pcs_l93)
+projection(T_hiver_PNM)<-CRS("+init=EPSG:2154")
 
 neige_PNM<-raster::raster("data/rasters/neige_PNM_focal400.asc")
-projection(neige_PNM)<-CRS(pcs_l93)
+projection(neige_PNM)<-CRS("+init=EPSG:2154")
+
 
 # ajout d'un masque pour le périmètre du site d'étude
 
-maskzone<-raster::rasterize(pnm, zone, background=NA)
-alt_PNM <- mask(alt_PNM, maskzone)
+limite_pnm<-sf::st_read(dsn = "data/site", layer = "pnm_total")
+maskPNM <- raster::rasterize(limite_pnm, alt_PNM, background=NA)
+
+alt_PNM <- mask(alt_PNM, maskPNM)
 
 
 cartetot <- stack(list(alt_PNM=scale(alt_PNM), 
