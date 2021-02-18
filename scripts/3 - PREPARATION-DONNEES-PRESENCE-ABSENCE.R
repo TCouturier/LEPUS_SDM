@@ -82,12 +82,12 @@ colnames(europaeus_hiver20)<-c("x","y")
 
 # rastériser les traces -> ss-mailles prospectées (1 lorsque parcourue sur au moins 1m) 
 traces <- sf::st_read(dsn = "data/trace", layer = "traces_prospection_2020")
-long_traces<-rasterize(traces, raster, field='id_serial', fun='length') # calcul de la longeur de transect par sous-maille : très long (et espace stockage insuffisant -> passer par cluster)
-projection(long_traces)<-CRS(pcs_l93)
+# long_traces<-rasterize(traces, raster, field='id_serial', fun='length') # calcul de la longeur de transect par sous-maille très long : réalisé par le cluster et intégré dans output
+long_traces<-raster::raster("./outputs/long_traces.asc")
+projection(long_traces)<-CRS("+init=EPSG:2154")
 traces <- long_traces
 traces[traces == 0] <- NA
 traces[traces > 0] <- 1 # mailles avec 1 si parcouru par l'observateur (même sur qqes mètres)
-writeRaster (traces, filename="traces.asc", proj4string = CRS("+init=epsg:32734"), overwrite=TRUE) # écriture du raster final
 
 
 
@@ -95,37 +95,35 @@ writeRaster (traces, filename="traces.asc", proj4string = CRS("+init=epsg:32734"
 # préparation des données en présence-absence 
 #######################
 
-# on crée un dataframe avec les coordonnées des ssmailles prospectées (centroïdes) et une colonne "pres" avec 0.
+# on crée un dataframe avec les coordonnées des mailles 100m prospectées (centroïdes) et une colonne "pres" avec 0.
 polygon_traces<-rasterToPolygons(traces)
 coord_traces<-as.data.frame(coordinates(polygon_traces))
-A <- dim(coord_traces)
-pres <- vector(length = A[1])
+pres <- vector(length = dim(coord_traces)[1])
 pres[]<-0
 coord_traces <- cbind(coord_traces, pres)
 colnames(coord_traces)<-c("x","y","pres")
 
 # le tableau de coordonnées avec présences
-A <- dim(timidus_hiver)
-pres_timidus <- vector(length = A[1])
+pres_timidus <- vector(length = dim(timidus_hiver20)[1])
 pres_timidus[]<-1
-coord_timidus <- cbind(timidus_hiver, pres_timidus)
+coord_timidus <- cbind(timidus_hiver20, pres_timidus)
 colnames(coord_timidus)<-c("x","y","pres")
 
-B <- dim(europaeus_hiver19)
-pres_europaeus <- vector(length = B[1])
+pres_europaeus <- vector(length = dim(europaeus_hiver20)[1])
 pres_europaeus[]<-1
-coord_europaeus <- cbind(europaeus_hiver19, pres_europaeus)
+coord_europaeus <- cbind(europaeus_hiver20, pres_europaeus)
 colnames(coord_europaeus)<-c("x","y","pres")
 
-# on assemble les deux tableaux et on supprime les doublons (centroïdes avec lièvre et traces) en conservant  que les 1 
+# on assemble les deux tableaux et on supprime les doublons (centroïdes avec lièvre et traces) en ne conservant  que les 1 
 assemblage_timidus <- rbind(coord_timidus, coord_traces)
-coord_timidus_pres<-assemblage_timidus[!duplicated(assemblage_timidus[,1:2]),]
+coord_timidus_presabs20<-assemblage_timidus[!duplicated(assemblage_timidus[,1:2]),]
 
 assemblage_europaeus <- rbind(coord_europaeus, coord_traces)
-coord_europaeus_pres<-assemblage_europaeus[!duplicated(assemblage_europaeus[,1:2]),]
+coord_europaeus_presabs20<-assemblage_europaeus[!duplicated(assemblage_europaeus[,1:2]),]
 
-myRespCoordp<-coord_europaeus_pres
+
+myRespCoordp<-coord_europaeus_presabs20
 myRespCoord<-myRespCoordp[,1:2]
 myResp <- as.numeric(myRespCoordp[,3])
-myRespName <- "europaeusp_100"
+myRespName <- "europaeuspabs"
 
