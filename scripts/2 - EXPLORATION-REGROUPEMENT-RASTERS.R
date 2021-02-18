@@ -104,6 +104,6 @@ write.csv2 (cor,'outputs/correlations.csv')
 
 # affichage de la matrice de corrélation (à exporter dans outputs)
 
-graphe_correlations<-corrplot::corrplot(cor$`pearson correlation coefficient`, type="upper", order="hclust", tl.col="black", tl.srt=45)
+corrplot::corrplot(cor$'pearson correlation coefficient', type="upper", order="hclust", tl.col="black", tl.srt=45)
 
 
