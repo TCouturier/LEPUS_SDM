@@ -3,9 +3,9 @@
 # importation et rastérisation des points d'observation lièvres après analyse génétique 
 #######################
 
-crottes_lots <- readOGR(dsn="D:/Thibaut/SIG/PNM/lievres/data_hiver2019/final", layer="resultat_maille_lots_crottes") # ouverture du fichier ssmailles li?vres avec lots
+crottes_lots <- readOGR(dsn="C:/Thibaut/SIG/PNM/lievres/data_hiver2019/final", layer="resultat_maille_lots_crottes") # ouverture du fichier ssmailles li?vres avec lots
 projection(crottes_lots)<-CRS(pcs_l93)
-crotte_seule <- readOGR(dsn="D:/Thibaut/SIG/PNM/lievres/data_hiver2019/final", layer="resultat_maille_crotte_seule") # ouverture du fichier ssmailles li?vres avec juste 1 crotte
+crotte_seule <- readOGR(dsn="C:/Thibaut/SIG/PNM/lievres/data_hiver2019/final", layer="resultat_maille_crotte_seule") # ouverture du fichier ssmailles li?vres avec juste 1 crotte
 projection(crotte_seule)<-CRS(pcs_l93)
 crottes_assemblees <- merge(crottes_lots, crotte_seule, by.x="id", by.y="id") # on cr?e une nouvelle couche o? les colonnes crottes issues des lots et seules sont ajout?es. 
 europaeus <- vector ("integer", length=nrow(crottes_assemblees@data)) # vecteur qui sera ajout? en tant que colonne au tableau
