@@ -11,14 +11,36 @@ library(mapview)
 # new février 2021
 points_collecte_lots_2020<-sf::st_read(dsn = "data/crotte", layer = "points_collecte_lots_2020")
 ssmailles_200m_prospection_2020<-sf::st_read(dsn = "data/crotte", layer = "ss-mailles_200m_prospection_2020")
-resultats_lots_plusieurs_crottes<-read_csv2("./data/crotte/resultats_lots_plusieurs_crottes.csv")
-resultats_crottes_seules<-read_csv2("./data/crotte/resultats_crottes_seules.csv")
+
+resultats_bruts_lots_plusieurs_crottes<-read_csv2("./data/crotte/resultats_bruts_lots_plusieurs_crottes.csv")
+resultats_bruts_crottes_seules<-read_csv2("./data/crotte/resultats_bruts_crottes_seules.csv")
+
+resultats_bruts_lots_plusieurs_crottes %>%
+  select(id_lot, Conclusion) %>%
+  rename(espece = Conclusion) -> plusieurs_crottes
+
+resultats_bruts_crottes_seules %>%
+  rename(espece = `Assignation espèce`) %>%
+  select(id_lot, espece) %>%
+  filter(!is.na(id_lot)) -> crottes_seules
+
+crottes_assemblees<-rbind(plusieurs_crottes, crottes_seules)
+
+crottes_assemblees %>%
+  filter(!espece %in% "aucune",
+         !is.na(espece)) %>%
+  mutate(timidus = if_else (espece %in% c("timidus seul","2 espèces", "timidus") , "1", "0"),
+         europaeus = if_else (espece %in% c("europaeus seul","2 espèces", "europaeus") , "1", "0"),
+         timidus = as.factor(timidus),
+         europaeus = as.factor(europaeus)) %>%
+  select(-espece) -> crottes_assemblees
 
 
-resultats_lots_plusieurs_crottes %>%
-  left_join(resultats_crottes_seules, by = c("id" = "id")) -> crottes_assemblees
-  
-  
+points_collecte_lots_2020 %>%
+  left_join(crottes_assemblees, by = c("id" = "id_lot")) -> points_collecte_essai
+
+
+
 
 
 # facultatifs
