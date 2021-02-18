@@ -1,7 +1,23 @@
 
+library(sf)
+library(tidyverse)
+
 #######################
 # importation et rastérisation des points d'observation lièvres après analyse génétique 
 #######################
+
+
+# new février 2021
+lots_multiples_2020<-sf::st_read(dsn = "data/crotte", layer = "lots_multiples_2020")
+lots_unitaire_2020<-sf::st_read(dsn = "data/crotte", layer = "lots_unitaires_2020")
+mailles_2km_prospection_2020<-sf::st_read(dsn = "data/crotte", layer = "mailles_2km_prospection_2020")
+points_collecte_lots_2020<-sf::st_read(dsn = "data/crotte", layer = "points_collecte_lots_2020")
+ssmailles_200m_prospection_2020<-sf::st_read(dsn = "data/crotte", layer = "ss-mailles_200m_prospection_2020")
+
+resultats_lots_plusieurs_crottes<-read_csv2("./data/crotte/resultats_lots_plusieurs_crottes.csv")
+resultats_crottes_seules<-read_csv2("./data/crotte/resultats_crottes_seules.csv")
+
+
 
 crottes_lots <- readOGR(dsn="C:/Thibaut/SIG/PNM/lievres/data_hiver2019/final", layer="resultat_maille_lots_crottes") # ouverture du fichier ssmailles li?vres avec lots
 projection(crottes_lots)<-CRS(pcs_l93)
