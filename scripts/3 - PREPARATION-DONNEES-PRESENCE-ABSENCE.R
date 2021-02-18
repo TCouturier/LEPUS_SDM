@@ -1,6 +1,7 @@
 
 library(sf)
 library(tidyverse)
+library(mapview)
 
 #######################
 # importation et rastérisation des points d'observation lièvres après analyse génétique 
@@ -8,14 +9,23 @@ library(tidyverse)
 
 
 # new février 2021
+points_collecte_lots_2020<-sf::st_read(dsn = "data/crotte", layer = "points_collecte_lots_2020")
+ssmailles_200m_prospection_2020<-sf::st_read(dsn = "data/crotte", layer = "ss-mailles_200m_prospection_2020")
+resultats_lots_plusieurs_crottes<-read_csv2("./data/crotte/resultats_lots_plusieurs_crottes.csv")
+resultats_crottes_seules<-read_csv2("./data/crotte/resultats_crottes_seules.csv")
+
+
+resultats_lots_plusieurs_crottes %>%
+  left_join(resultats_crottes_seules, by = c("id" = "id")) -> crottes_assemblees
+  
+  
+
+
+# facultatifs
 lots_multiples_2020<-sf::st_read(dsn = "data/crotte", layer = "lots_multiples_2020")
 lots_unitaire_2020<-sf::st_read(dsn = "data/crotte", layer = "lots_unitaires_2020")
 mailles_2km_prospection_2020<-sf::st_read(dsn = "data/crotte", layer = "mailles_2km_prospection_2020")
-points_collecte_lots_2020<-sf::st_read(dsn = "data/crotte", layer = "points_collecte_lots_2020")
-ssmailles_200m_prospection_2020<-sf::st_read(dsn = "data/crotte", layer = "ss-mailles_200m_prospection_2020")
 
-resultats_lots_plusieurs_crottes<-read_csv2("./data/crotte/resultats_lots_plusieurs_crottes.csv")
-resultats_crottes_seules<-read_csv2("./data/crotte/resultats_crottes_seules.csv")
 
 
 
