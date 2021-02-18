@@ -1,21 +1,5 @@
----
-output:
-  github_document: default
-  md_document:
-    variant: markdown_github
----
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, echo = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "README-"
-)
-# Please put your title here to include it in the file below.
-Title <- "Modélisation des changements de distribution hivernale du lièvre variable _Lepus timidus_ et du lièvre d’Europe _Lepus europaeus_ sur leur zone de contact en lien avec le changement climatique "
-```
 
 # Projet “Modèles de niche Lièvres sur les massifs alpins”
 
@@ -43,8 +27,9 @@ Ce projet a été initié le 17 février 2021.
 
 Ce dossier d’analyses contient :
 
-  - [:file\_folder: data](./data): Les données obtenues dans le
-    Parc national du Mercantour utilisées lors de l’analyse. Les rasters
+  - [:file\_folder: data](./data): Les données obtenues dans le Parc
+    national du Mercantour utilisées lors de l’analyse. Les rasters
     obtenus sur l’emprise du Parc sont dans un sous-dossier “rasters”.
-  - [:file\_folder: scripts](./scripts): Les scripts utilisés lors de l'analyse. Ils sont organisés en plusieurs étapes. 
-  - [:file\_folder: outputs](./outputs): Les exports issus de l'analyse
+  - [:file\_folder: scripts](./scripts): Les scripts utilisés lors de
+    l’analyse. Ils sont organisés en plusieurs étapes.
+  - [:file\_folder: outputs](./outputs): Les exports issus de l’analyse
