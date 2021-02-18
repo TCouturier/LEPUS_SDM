@@ -107,3 +107,29 @@ write.csv2 (cor,'outputs/correlations.csv')
 corrplot::corrplot(cor$'pearson correlation coefficient', type="upper", order="hclust", tl.col="black", tl.srt=45)
 
 
+# certaines variables sont fortement corrélées entre elles donc on les retire (altitude,rugosité,roches,distance aux chemins). Nouvelle compilation des variables retenues.
+
+variables_sdm <- stack(list(pente_PNM=scale(pente_PNM), 
+                       tpi_PNM=scale(tpi_PNM), 
+                       pelouses_prairies_PNM= scale(pelouses_prairies_PNM),
+                       landes_PNM=scale(landes_PNM), 
+                       forets_PNM=scale(forets_PNM), 
+                       dist_troncon_eau_PNM=scale(dist_troncon_eau_PNM),  
+                       dist_foret_PNM=scale(dist_foret_PNM),
+                       dist_ski_PNM=scale(dist_ski_PNM), 
+                       neige_PNM=scale(neige_PNM), 
+                       dist_bati_PNM=scale(dist_bati_PNM))) # tout
+
+# ajouter ici une fonction pour rendre l'affichage plus agréable à lire !
+
+plot(variables_sdm)
+
+# nouveau test de corrélation entre les variables pour vérification
+
+cor1<-raster::layerStats(variables_sdm,'pearson',na.rm=TRUE)
+write.csv2 (cor1,'outputs/correlations2.csv')
+
+# affichage de la matrice de corrélation (à exporter dans outputs)
+
+corrplot::corrplot(cor1$'pearson correlation coefficient', type="upper", order="hclust", tl.col="black", tl.srt=45)
+
