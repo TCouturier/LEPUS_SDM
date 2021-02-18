@@ -1,8 +1,8 @@
 ---
 output:
-  github_document: default
   md_document:
     variant: markdown_github
+  github_document: default
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
