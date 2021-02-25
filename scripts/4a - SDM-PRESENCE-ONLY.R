@@ -34,14 +34,14 @@ SPLIT <- 100
 
 ###  NB DE REITERATIONS
 
-IT <- 2
+IT <- 5
 
 
 ####
 ########################################################## 
 # prÈsences seules (on a au prÈalable sÈlectionner une seule observation par maille (pour eviter les prolËmes d'autocorrelation))
 #myRespCoord<-read.csv2("./data_aleatoires_pixels_fires.csv")
-myRespCoord<-sf::st_read(dsn = "data/obs_opportunistes", layer = "lepus_pnm")
+myRespCoord<-sf::st_read(dsn = "data/obs_opportunistes", layer = "lagopus")
 #Rasteriser les point d'observation 
 alt_PNM<-raster::raster("data/rasters/alt_PNM_focal400.asc")
 projection(alt_PNM)<-CRS("+init=EPSG:2154")
@@ -361,7 +361,7 @@ prediction<-mask
 values(prediction)<-as.vector(MEAN.P)
 plot(prediction)
 
-writeRaster(prediction,"Predict_GAM_MEAN.asc",format="ascii",overwrite=TRUE)
+writeRaster(prediction,"outputs/Predict_GAM_MEAN_lagopus0.asc",format="ascii",overwrite=TRUE)
 
 
 
