@@ -1,64 +1,66 @@
-########################
-###### présences-absences
-########################
+library(sf)
+library(raster)
+library(dismo)
+library(mgcv)
+library(boot)
+library(biomod2)
 
-#  préparation des données en présence-absence
+pente_PNM<-raster::raster("data/rasters/pente_PNM_focal400.asc")
+tpi_PNM<-raster::raster("data/rasters/tpi_PNM_focal400.asc")
+pelouses_prairies_PNM<-raster::raster("data/rasters/pelouses_prairies_PNM_focal400.asc")
+landes_PNM<-raster::raster("data/rasters/landes_PNM_focal400.asc")
+forets_PNM<-raster::raster("data/rasters/forets_PNM_focal400.asc")
+dist_troncon_eau_PNM<-raster::raster("data/rasters/distance_eau_PNM_focal400.asc")
+dist_foret_PNM<-raster::raster("data/rasters/distance_foret_PNM_focal400.asc")
+dist_ski_PNM<-raster::raster("data/rasters/distance_ski_PNM_focal400.asc")
+neige_PNM<-raster::raster("data/rasters/neige_PNM_focal400.asc")
+dist_bati_PNM<-raster::raster("data/rasters/distance_bati_PNM_focal400.asc")
 
-# rastériser les traces -> ss-mailles prospectées (1 lorsque parcourue sur au moins 1m) 
-traces <- readOGR(dsn="C:/Thibaut/SIG/PNM/lievres/data_hiver2019/final", layer="loc_traces")
-long_traces<-rasterize(traces, maskzone, field='name', fun='length') # calcul de la longeur de transect par sous-maille : très long (et espace stockage insuffisant -> passer par cluster)
-long_traces<-raster("C:/Thibaut/lievre/modele_niche/PNM/data2019/long_traces.asc")
-projection(long_traces)<-CRS(pcs_l93)
-traces <- long_traces
-traces[traces == 0] <- NA
-traces[traces > 0] <- 1 # mailles avec 1 si parcouru par l'observateur (même sur qqes mètres)
-writeRaster (traces, filename="traces.asc", proj4string = CRS("+init=epsg:32734"), overwrite=TRUE) # écriture du raster final
 
-# on crée un dataframe avec les coordonnées des ssmailles prospectées (centroïdes) et une colonne "pres" avec 0.
-polygon_traces<-rasterToPolygons(traces)
-coord_traces<-as.data.frame(coordinates(polygon_traces))
-A <- dim(coord_traces)
-pres <- vector(length = A[1])
-pres[]<-0
-coord_traces <- cbind(coord_traces, pres)
-colnames(coord_traces)<-c("x","y","pres")
+variables_sdm <- stack(list(pente_PNM=scale(pente_PNM), 
+                            tpi_PNM=scale(tpi_PNM), 
+                            pelouses_prairies_PNM= scale(pelouses_prairies_PNM),
+                            landes_PNM=scale(landes_PNM), 
+                            forets_PNM=scale(forets_PNM), 
+                            dist_troncon_eau_PNM=scale(dist_troncon_eau_PNM),  
+                            dist_foret_PNM=scale(dist_foret_PNM),
+                            dist_ski_PNM=scale(dist_ski_PNM), 
+                            neige_PNM=scale(neige_PNM), 
+                            dist_bati_PNM=scale(dist_bati_PNM))) 
 
-# le tableau de coordonnées avec présences
-A <- dim(timidus_hiver)
-pres_timidus <- vector(length = A[1])
-pres_timidus[]<-1
-coord_timidus <- cbind(timidus_hiver, pres_timidus)
-colnames(coord_timidus)<-c("x","y","pres")
 
-B <- dim(europaeus_hiver19)
-pres_europaeus <- vector(length = B[1])
-pres_europaeus[]<-1
-coord_europaeus <- cbind(europaeus_hiver19, pres_europaeus)
-colnames(coord_europaeus)<-c("x","y","pres")
+### POURCENTAGE DE DATA POUR LE MODELE (100-SPLIT = POURCENTAGE POUR LES METRIQUES D'EVALUATION)
 
-# on assemble les deux tableaux et on supprime les doublons (centroïdes avec lièvre et traces) en conservant  que les 1 
-assemblage_timidus <- rbind(coord_timidus, coord_traces)
-coord_timidus_pres<-assemblage_timidus[!duplicated(assemblage_timidus[,1:2]),]
+SPLIT <- 70
 
-assemblage_europaeus <- rbind(coord_europaeus, coord_traces)
-coord_europaeus_pres<-assemblage_europaeus[!duplicated(assemblage_europaeus[,1:2]),]
+###  NB DE REITERATIONS
 
-myRespCoordp<-coord_europaeus_pres
-myRespCoord<-myRespCoordp[,1:2]
-myResp <- as.numeric(myRespCoordp[,3])
-myRespName <- "europaeusp_100"
+IT <- 2
+
+## Présence et absence pour les deux espèces
 
 
 
-# BIOMOD 
+
+
+
+
+
+
+
+
+##############################################################
+##############################################################
+# BIOMOD PRESENCE ABSENCE#####################################
 # 1. Formating Data
 myBiomodData <- BIOMOD_FormatingData(resp.var = myResp,
-                                     expl.var = cartetot8,
+                                     expl.var = variables_sdm,
                                      resp.xy = myRespCoord,
                                      resp.name = myRespName)
 
 
-#plot(myBiomodData)
+#
+plot(myBiomodData)
 
 
 # 2. Defining Models Options using default options.

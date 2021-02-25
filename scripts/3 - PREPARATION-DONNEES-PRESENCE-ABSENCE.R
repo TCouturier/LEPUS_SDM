@@ -72,8 +72,8 @@ europaeus_hiver20<-as.data.frame(coordinates(polygon_europaeus))
 colnames(europaeus_hiver20)<-c("x","y")
 
 
-# write.csv2(europaeus_hiver ,"coord.centroides_europaeus.csv")
-
+# write.csv2(europaeus_hiver20 ,"outputs/coord.centroides_europaeus.csv")
+# write.csv2(timidus_hiver20 ,"outputs/coord.centroides_timidus.csv")
 
 #######################
 # importation des traces 
@@ -121,8 +121,8 @@ assemblage_europaeus <- rbind(coord_europaeus, coord_traces)
 coord_europaeus_presabs20<-assemblage_europaeus[!duplicated(assemblage_europaeus[,1:2]),]
 
 # suite, auformat biomod... (facultatif)
-myRespCoordp<-coord_europaeus_presabs20
+myRespCoordp<-coord_timidus_presabs20
 myRespCoord<-myRespCoordp[,1:2]
 myResp <- as.numeric(myRespCoordp[,3])
-myRespName <- "europaeuspabs"
+myRespName <- "timiduspabs"
 
