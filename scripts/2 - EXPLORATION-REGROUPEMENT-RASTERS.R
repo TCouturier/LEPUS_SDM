@@ -6,6 +6,10 @@
 library(raster)
 library(sf)
 library(corrplot)
+library(ggplot2)
+library(tidyverse)
+library(rasterVis)
+
 
 # importation de tous les rasters créés
 
@@ -91,9 +95,57 @@ cartetot <- stack(list(alt_PNM=scale(alt_PNM),
                        neige_PNM=scale(neige_PNM), 
                        dist_bati_PNM=scale(dist_bati_PNM))) # tout
 
-# ajouter ici une fonction pour rendre l'affichage plus agréable à lire !
 
-plot(cartetot)
+# visualisation de toutes les cartes (objet stack)) : par contre, échelle de la légende unique (min et max pour tous les graphes), donc difficile de visualiser. 
+
+windows(width = 10, height = 10)
+rasterVis::gplot(cartetot) +
+  geom_tile(aes(fill = value)) +
+  facet_wrap(~ variable) +
+  scale_fill_gradientn(colours = rev(terrain.colors(225)), na.value = "white") +
+  coord_equal() +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_blank(), 
+        axis.text.y = element_blank(),
+        panel.grid = element_blank(),
+        legend.title = element_text(colour="black", size=10),
+        legend.text = element_text(size=10)) +
+  ggtitle("PNM") 
+
+
+# création des cartes raster une par une (ex de la forêt et altitude, échelles non scalées)
+
+forets<-as.data.frame(forets_PNM, xy=TRUE) %>%
+  tidyr::drop_na()
+
+windows(width = 7, height = 7)
+ggplot() +
+  xlab("Longitude") + 
+  ylab("Latitude")  +
+  labs(fill = "forêts") +
+  geom_raster(data=forets, aes(x = x, y = y, fill=forets_PNM_focal400))+
+  scale_fill_gradient(low = "white",  high = "green") +
+  geom_sf(data = limite_pnm, fill=NA, size=0.5, color="black") -> graphe_forets
+
+
+alt<-as.data.frame(alt_PNM, xy=TRUE) %>%
+  tidyr::drop_na()
+
+windows(width = 7, height = 7)
+ggplot() +
+  xlab("Longitude") + 
+  ylab("Latitude") + 
+  labs(fill = "altitude") +
+  geom_raster(data=alt, aes(x = x, y = y, fill=alt_PNM_focal400))+
+  scale_fill_gradient(low = "white",  high = "red") +
+  geom_sf(data = limite_pnm, fill=NA, size=0.5, color="black") -> graphe_alt
+
+
+
+# assemblage des graphes "indépendants" (à réaliser avec tous les rasters)
+cowplot::plot_grid(graphe_alt, graphe_forets, labels=c("A", "B"), ncol = 2, nrow = 1)
+
 
 
 # test de corrélation entre les variables pour rechercher celles qui apportent la même information
