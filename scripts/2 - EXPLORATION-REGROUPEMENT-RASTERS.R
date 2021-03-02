@@ -99,7 +99,8 @@ cartetot <- stack(list(alt_PNM=scale(alt_PNM),
 # visualisation de toutes les cartes (objet stack)) : par contre, échelle de la légende unique (min et max pour tous les graphes), donc difficile de visualiser. 
 
 windows(width = 10, height = 10)
-rasterVis::gplot(cartetot) +
+cartetot %>%
+rasterVis::gplot() +
   geom_tile(aes(fill = value)) +
   facet_wrap(~ variable) +
   scale_fill_gradientn(colours = rev(terrain.colors(225)), na.value = "white") +
@@ -116,28 +117,29 @@ rasterVis::gplot(cartetot) +
 
 # création des cartes raster une par une (ex de la forêt et altitude, échelles non scalées)
 
-forets<-as.data.frame(forets_PNM, xy=TRUE) %>%
-  tidyr::drop_na()
 
 windows(width = 7, height = 7)
-ggplot() +
+forets_PNM %>%
+  as.data.frame(xy=TRUE) %>%
+  tidyr::drop_na() %>%
+  ggplot() +
   xlab("Longitude") + 
   ylab("Latitude")  +
   labs(fill = "forêts") +
-  geom_raster(data=forets, aes(x = x, y = y, fill=forets_PNM_focal400))+
+  geom_raster(aes(x = x, y = y, fill=forets_PNM_focal400))+
   scale_fill_gradient(low = "white",  high = "green") +
   geom_sf(data = limite_pnm, fill=NA, size=0.5, color="black") -> graphe_forets
 
 
-alt<-as.data.frame(alt_PNM, xy=TRUE) %>%
-  tidyr::drop_na()
-
 windows(width = 7, height = 7)
-ggplot() +
+alt_PNM %>%
+  as.data.frame(xy=TRUE) %>%
+  tidyr::drop_na() %>%
+  ggplot() +
   xlab("Longitude") + 
   ylab("Latitude") + 
   labs(fill = "altitude") +
-  geom_raster(data=alt, aes(x = x, y = y, fill=alt_PNM_focal400))+
+  geom_raster(aes(x = x, y = y, fill=alt_PNM_focal400))+
   scale_fill_gradient(low = "white",  high = "red") +
   geom_sf(data = limite_pnm, fill=NA, size=0.5, color="black") -> graphe_alt
 
@@ -154,9 +156,11 @@ cor<-raster::layerStats(cartetot,'pearson',na.rm=TRUE)
 write.csv2 (cor,'outputs/correlations.csv')
 
 
-# affichage de la matrice de corrélation (à exporter dans outputs)
+# exprt figure matrice de corrélation 
 
-corrplot::corrplot(cor$'pearson correlation coefficient', type="upper", order="hclust", tl.col="black", tl.srt=45)
+png(file = "./outputs/figure_cor.png", width = 700, height = 700)
+corrplot::corrplot(cor$'pearson correlation coefficient', type="upper", order="hclust",  tl.col="black", tl.srt=45)
+dev.off()
 
 
 # certaines variables sont fortement corrélées entre elles donc on les retire (altitude,rugosité,roches,distance aux chemins). Nouvelle compilation des variables retenues.
