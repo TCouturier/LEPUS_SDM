@@ -1,3 +1,32 @@
+library(sp)
+library(maptools)
+library(rgeos)
+library(raster)
+library(rgdal)
+# library(spatial.tools) : package supprimé en Avril 2020
+library(ncdf4)
+library(biomod2)
+library(spdep)
+library(tiff)
+library(gdalUtils)
+library(gdalUtilities) # en remplacement de spatial.tools pour rééchantillonnage raster (info Cyril)
+library(sf)
+
+
+pcs_l93 <- "+init=EPSG:2154" # système de coordonnées projetées utilisé pour toute l'analyse
+
+# chercher l'emprise de la zone d'après un shape 
+shp_zone <- readOGR(dsn="C:/Thibaut/SIG/Devoluy", layer="emprise_devoluy") # ouverture du fichier avec les limites de la zone d'étude étendue (rectangulaire).
+shp_zone<-spTransform(shp_zone, crs(pcs_l93)) # changement du système de projection (dans cet exemple, la projection était déjà ok)
+extent(shp_zone) # on récupère les valeurs xmin, xmax, ymin et ymax 
+
+# création raster vide (valeurs à 0) à résolution 100m sur la zone d'étude 
+zone<-raster (xmn=906984,xmx=949118,ymn=6372617,ymx=6425812,res=100) # ajustements xmin et ymax pour alignement avec les mailles définies sur le PNM.
+projection(zone)<-CRS(pcs_l93) # définition du système de projection du raster
+values(zone)<-0
+
+
+
 #########################################################
 ############ CREATION / REECHANTILLONNAGE RASTERS
 #########################################################
