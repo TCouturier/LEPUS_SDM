@@ -4,28 +4,9 @@ library(dismo)
 library(mgcv)
 library(boot)
 
-pente_PNM<-raster::raster("data/rasters/pente_PNM_focal400.asc")
-tpi_PNM<-raster::raster("data/rasters/tpi_PNM_focal400.asc")
-pelouses_prairies_PNM<-raster::raster("data/rasters/pelouses_prairies_PNM_focal400.asc")
-landes_PNM<-raster::raster("data/rasters/landes_PNM_focal400.asc")
-forets_PNM<-raster::raster("data/rasters/forets_PNM_focal400.asc")
-dist_troncon_eau_PNM<-raster::raster("data/rasters/distance_eau_PNM_focal400.asc")
-dist_foret_PNM<-raster::raster("data/rasters/distance_foret_PNM_focal400.asc")
-dist_ski_PNM<-raster::raster("data/rasters/distance_ski_PNM_focal400.asc")
-neige_PNM<-raster::raster("data/rasters/neige_PNM_focal400.asc")
-dist_bati_PNM<-raster::raster("data/rasters/distance_bati_PNM_focal400.asc")
 
+# Les données de raster assemblées en stack (étape 2) doivent préalablement être chargées dans l'environnement de travail. Nommé ici 'variables_sdm' 
 
-variables_sdm <- stack(list(pente_PNM=scale(pente_PNM), 
-                       tpi_PNM=scale(tpi_PNM), 
-                       pelouses_prairies_PNM= scale(pelouses_prairies_PNM),
-                       landes_PNM=scale(landes_PNM), 
-                       forets_PNM=scale(forets_PNM), 
-                       dist_troncon_eau_PNM=scale(dist_troncon_eau_PNM),  
-                       dist_foret_PNM=scale(dist_foret_PNM),
-                       dist_ski_PNM=scale(dist_ski_PNM), 
-                       neige_PNM=scale(neige_PNM), 
-                       dist_bati_PNM=scale(dist_bati_PNM))) 
 
 
 ### POURCENTAGE DE DATA POUR LE MODELE (100-SPLIT = POURCENTAGE POUR LES METRIQUES D'EVALUATION)
@@ -378,27 +359,29 @@ writeRaster(prediction,"outputs/Predict_GAM_MEAN_lagopus0.asc",format="ascii",ov
 
 
 
-# importer le .shp avec les présences simples. 
+
 
 
 ############################################################################## 
 ################# BIOMOD2
 ############################################################################## 
 
-myRespCoord<-europaeus_hiver19
-myRespCoord<- coordinates(europaeus_hiver)
+# importer le .shp avec les présences simples puis formater pour biomod
+data_presence<-sf::st_read(dsn = "data/obs_opportunistes", layer = "lepus_timidus")
+
+myRespCoord<- sf::st_coordinates(data_presence)
 A<-dim(myRespCoord)
 myResp <- as.numeric(rep(1,A[1]))
-myRespName <- "europaeus_cartetot8"
+myRespName <- "timidusponly"
 nbrep<-10
 nbpseudo<-A[1]
 
-
+setwd("./outputs/biomod") # pour ne pas mettre le dossier biomod à la racine du projet (par défaut, pas trouvé de moyen de le spécifier)
 
 # BIOMOD présences seules
 # 1. Formating Data
 myBiomodData <- BIOMOD_FormatingData(resp.var = myResp,
-                                     expl.var = cartetot8,
+                                     expl.var = variables_sdm,
                                      resp.xy = myRespCoord,
                                      resp.name = myRespName,
                                      PA.nb.rep = nbrep,
@@ -432,7 +415,8 @@ myBiomodModelOut <- BIOMOD_Modeling(myBiomodData,
                                     Yweights=NULL,
                                     VarImport=3,
                                     models.eval.meth = c("KAPPA","TSS","ROC"),
-                                    SaveObj = TRUE )
+                                    SaveObj = TRUE,
+                                    )
 
 
 ## print a summary of modeling stuff

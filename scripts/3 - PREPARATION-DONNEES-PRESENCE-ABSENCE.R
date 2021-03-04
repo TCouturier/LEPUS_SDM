@@ -120,9 +120,18 @@ coord_timidus_presabs20<-assemblage_timidus[!duplicated(assemblage_timidus[,1:2]
 assemblage_europaeus <- rbind(coord_europaeus, coord_traces)
 coord_europaeus_presabs20<-assemblage_europaeus[!duplicated(assemblage_europaeus[,1:2]),]
 
-# suite, auformat biomod... (facultatif)
+
+# prévoir ici une cartographie avec les points de présence et absence, à exporter dans les outputs ? 
+
+
+# préparation des données pour biomod
 myRespCoordp<-coord_timidus_presabs20
 myRespCoord<-myRespCoordp[,1:2]
 myResp <- as.numeric(myRespCoordp[,3])
 myRespName <- "timiduspabs"
 
+# ou (penser à recharger en cas de changement d'espèce)
+myRespCoordp<-coord_europaeus_presabs20
+myRespCoord<-myRespCoordp[,1:2]
+myResp <- as.numeric(myRespCoordp[,3])
+myRespName <- "europaeuspabs"

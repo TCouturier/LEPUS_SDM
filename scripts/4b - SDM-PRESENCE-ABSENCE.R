@@ -42,21 +42,25 @@ IT <- 2
 
 
 
-
-
-
-
-
-
-
 ##############################################################
 ##############################################################
 # BIOMOD PRESENCE ABSENCE#####################################
+
+
+# Les données de raster assemblées en stack (étape 2) doivent préalablement être chargées dans l'environnement de travail. Nommé ici 'variables_sdm' 
+# Il en est de même pour les données de présence-absence (étape 4b). Nommé ici 'myRespCoord' (les x et y) et 'myResp' (vecteur avec 0 ou 1). 'myRespName' est le nom donné aux fichiers/dossiers d'analyse par la suite.
+
+
+
+
 # 1. Formating Data
 myBiomodData <- BIOMOD_FormatingData(resp.var = myResp,
                                      expl.var = variables_sdm,
                                      resp.xy = myRespCoord,
                                      resp.name = myRespName)
+
+
+setwd("./outputs/biomod") # pour ne pas mettre le dossier biomod à la racine du projet (par défaut, pas trouvé de moyen de le spécifier)
 
 
 #
