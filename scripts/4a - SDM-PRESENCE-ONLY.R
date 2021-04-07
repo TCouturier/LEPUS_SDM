@@ -430,7 +430,7 @@ write.table(importances_variables, 'importances_variables.csv', dec = ",", col.n
 ROC<-myBiomodModelEval["ROC","Testing.data",,,] # imprimer les scores AUC de tous les modèles sélectionnés
 write.table(ROC, 'ROC.csv', dec = ",")
 
-# 4. Creating the ensemble models (faire la moyenne de tous les modèles précédents en gardant ceux dont le ROC/AUC est supérieur à 0.75
+# 4. Creating the ensemble models (faire la moyenne de tous les modèles précédents en gardant ceux dont le ROC/AUC est supérieur à 0.70
 myBiomodEM <- BIOMOD_EnsembleModeling( 
   modeling.output = myBiomodModelOut,
   chosen.models = grep('_GAM', get_built_models(myBiomodModelOut), 

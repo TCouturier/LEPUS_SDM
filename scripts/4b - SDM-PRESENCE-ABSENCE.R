@@ -60,6 +60,9 @@ myBiomodData <- BIOMOD_FormatingData(resp.var = myResp,
                                      resp.name = myRespName)
 
 
+# sQuotePA.nb.rep = 0 # à tester (voir aide : 
+# When both presence and absence data are available, and there is enough absences: set sQuotePA.nb.rep to 0. No pseudo-absence will be extracted.)
+
 setwd("./outputs/biomod") # pour ne pas mettre le dossier biomod à la racine du projet (par défaut, pas trouvé de moyen de le spécifier)
 
 
